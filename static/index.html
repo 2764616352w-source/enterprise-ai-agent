@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>企业 AI Agent 控制台</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%230b0e15"/><path d="M8 25V7h9a6 6 0 0 1 0 12H11" stroke="%236f96ff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar" data-od-id="sidebar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="3" width="16" height="18" rx="2.5"/>
+          <path d="M8.5 7.5h7M8.5 11h7M8.5 14.5h4"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">企业 AI Agent</span>
+        <span class="brand-sub">Enterprise AI Console</span>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="主导航">
+      <button class="nav-item is-active" data-view="chat" data-od-id="nav-chat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="nav-label">AI 对话</span>
+        <span class="nav-index">01</span>
+      </button>
+      <button class="nav-item" data-view="docs" data-od-id="nav-docs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6"/>
+          <path d="M9 13h6M9 17h6"/>
+        </svg>
+        <span class="nav-label">文档库</span>
+        <span class="nav-index">02</span>
+      </button>
+      <button class="nav-item" data-view="health" data-od-id="nav-health">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12h4l2-7 4 14 2-7h6"/>
+        </svg>
+        <span class="nav-label">系统状态</span>
+        <span class="nav-index">03</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="side-status" data-od-id="sidebar-status">
+        <span class="dot dot-running" aria-hidden="true"></span>
+        <span class="side-status-text">服务 · 检查中</span>
+      </div>
+      <span class="side-version">LOCAL DEPLOY · V1.0</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <section class="view" id="view-chat" data-od-id="view-chat">
+      <div class="chat-toolbar">
+        <div class="toolbar-left">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span class="toolbar-title">会话</span>
+          <span class="toolbar-note">多轮上下文已开启</span>
+        </div>
+        <div class="toolbar-right">
+          <label class="switch" title="切换为一次性返回完整结果">
+            <input type="checkbox" id="chk-nonstream">
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-label">非流式</span>
+          </label>
+          <button class="btn btn-ghost" id="btn-clear" data-od-id="chat-clear" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6"/>
+            </svg>
+            清空
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-scroll" id="chat-scroll" data-od-id="chat-messages">
+        <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
+      </div>
+
+      <details class="chat-params" data-od-id="chat-params">
+        <summary>
+          <span class="params-title">高级参数</span>
+          <span class="params-sub">model · temperature · max_tokens（留空则不随请求发送）</span>
+        </summary>
+        <div class="params-grid">
+          <label class="field">
+            <span class="field-label">模型 model</span>
+            <input class="field-input" id="p-model" type="text" autocomplete="off" placeholder="例如 agent-3">
+          </label>
+          <label class="field">
+            <span class="field-label">温度 temperature</span>
+            <input class="field-input" id="p-temperature" type="number" min="0" max="2" step="0.1" value="0.7">
+          </label>
+          <label class="field">
+            <span class="field-label">最大输出 max_tokens</span>
+            <input class="field-input" id="p-max-tokens" type="number" min="1" step="1" value="2048">
+          </label>
+        </div>
+      </details>
+
+      <div class="composer" data-od-id="chat-composer">
+        <textarea id="chat-input" rows="1" placeholder="输入你的问题…（Enter 发送，Shift+Enter 换行）" data-od-id="chat-input"></textarea>
+        <div class="composer-actions">
+          <span class="composer-hint">Enter 发送 · Shift+Enter 换行</span>
+          <button class="btn btn-primary" id="btn-send" data-od-id="chat-send" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 2L11 13"/>
+              <path d="M22 2L15 22l-4-9-9-4z"/>
+            </svg>
+            发送
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-docs" data-od-id="view-docs" hidden>
+      <div class="view-header">
+        <div class="view-heading">
+          <h2>文档库</h2>
+          <p>上传文档以构建企业检索知识库，供 Agent 检索引用。</p>
+        </div>
+        <div class="view-actions">
+          <button class="btn btn-ghost btn-icon" id="btn-docs-refresh" data-od-id="docs-refresh" type="button" title="刷新列表" aria-label="刷新列表">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+              <path d="M21 3v6h-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="view-body">
+        <div class="dropzone" id="dropzone" data-od-id="docs-dropzone" tabindex="0" role="button" aria-label="上传文档">
+          <input type="file" id="file-input" hidden multiple>
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 14a5 5 0 0 1 .8-9.9A6 6 0 0 1 16.3 6.5 4.5 4.5 0 0 1 18.5 14"/>
+              <path d="M12 20v-8M9 14.5l3-3 3 3"/>
+            </svg>
+          </div>
+          <p class="dropzone-main">拖拽文档到此处，或 <span class="dropzone-link">点击选择文件</span></p>
+          <p class="dropzone-sub">通过 <code>/api/v1/documents/upload</code> 上传，支持 PDF / DOCX / Markdown / TXT 等格式</p>
+          <div class="upload-progress" id="upload-progress" hidden>
+            <span class="upload-progress-label" id="upload-progress-label">上传中…</span>
+            <div class="upload-progress-bar"><span id="upload-progress-bar"></span></div>
+          </div>
+        </div>
+
+        <div class="docs-list">
+          <div class="docs-list-head">
+            <h3>文档列表</h3>
+            <span class="count-badge" id="docs-count">0 项</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" data-od-id="docs-table">
+              <thead>
+                <tr>
+                  <th class="col-file">文件名</th>
+                  <th class="col-type">类型</th>
+                  <th class="col-status">状态</th>
+                  <th class="col-time">创建时间</th>
+                </tr>
+              </thead>
+              <tbody id="docs-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="docs-empty" data-od-id="docs-empty" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6"/>
+            </svg>
+            <p>暂无文档</p>
+            <span>上传第一份文档后，Agent 即可检索引用。</span>
+          </div>
+          <div class="inline-error" id="docs-error" data-od-id="docs-error" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-health" data-od-id="view-health" hidden>
+      <div class="view-header">
+        <div class="view-heading">
+          <h2>系统状态</h2>
+          <p>服务与后端依赖的运行状况。状态每 15 秒自动刷新。</p>
+        </div>
+        <div class="view-actions">
+          <label class="switch" title="自动刷新开关">
+            <input type="checkbox" id="chk-auto-refresh" checked>
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-label">自动刷新</span>
+          </label>
+          <button class="btn btn-ghost" id="btn-health-refresh" data-od-id="health-refresh" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+              <path d="M21 3v6h-6"/>
+            </svg>
+            刷新
+          </button>
+        </div>
+      </div>
+
+      <div class="view-body">
+        <div class="health-grid" data-od-id="health-cards">
+          <article class="health-card" data-od-id="health-card-service">
+            <div class="health-card-head">
+              <span class="health-label">服务状态</span>
+              <span class="dot" id="hc-dot-service" aria-hidden="true"></span>
+            </div>
+            <p class="health-value mono" id="hc-val-service">核查中…</p>
+            <p class="health-meta">GET <code>/api/v1/health</code></p>
+          </article>
+          <article class="health-card" data-od-id="health-card-db">
+            <div class="health-card-head">
+              <span class="health-label">数据库</span>
+              <span class="dot" id="hc-dot-db" aria-hidden="true"></span>
+            </div>
+            <p class="health-value mono" id="hc-val-db">—</p>
+            <p class="health-meta">GET <code>/api/v1/health/ready</code></p>
+          </article>
+          <article class="health-card" data-od-id="health-card-env">
+            <div class="health-card-head">
+              <span class="health-label">应用环境</span>
+              <span class="dot dot-neutral" aria-hidden="true"></span>
+            </div>
+            <p class="health-value mono" id="hc-val-env">—</p>
+            <p class="health-meta">app_env 字段</p>
+          </article>
+        </div>
+        <div class="health-foot">
+          <span class="health-updated" id="health-updated">尚未刷新</span>
+          <button class="btn btn-ghost" id="btn-health-refresh2" data-od-id="health-refresh-duplicate" type="button">立即检查</button>
+        </div>
+        <div class="inline-error" id="health-error" data-od-id="health-error" hidden></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite" data-od-id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

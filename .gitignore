@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Runtime data
+uploads/
+data/
+*.db
+
+# 学习资料（不上传）
+study/
+migrate_pg_to_mysql.py
+sample_docs/
